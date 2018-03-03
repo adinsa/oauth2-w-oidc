@@ -1,4 +1,6 @@
 #!/bin/bash
+# This script gets invoked by the geni-lib script 'profile.py' to set up the CloudLab node. 
+# It installs Java, Tomcat, and Maven before building and deploying the webapps in the 'oauth2-w-oidc' project.
 
 cd /tmp
 
@@ -30,6 +32,8 @@ export JAVA_HOME=/local/jdk1.8.0_161/
 export PATH=/local/apache-maven-3.5.2/bin/:$PATH
 
 cd /local/repository
+
+# Yuck! Find a better way of injecting the hostname.
 sed -i "s/localhost/$HOSTNAME/g" oidc-server/src/main/webapp/WEB-INF/server-config.xml
 sed -i "s/localhost/$HOSTNAME/g" simple-web-app/src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml
 mvn package

@@ -1,4 +1,4 @@
-"""A git repository-based Cloudlab profile."""
+"""A git repository-based CloudLab profile containing a single node running Ubuntu.""" 
 
 # Import the Portal object.
 import geni.portal as portal
