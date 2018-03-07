@@ -7,7 +7,7 @@ It is a Maven project with the following modules:
 - ```oidc-server```- A simple [overlay](https://github.com/mitreid-connect/OpenID-Connect-Java-Spring-Server/wiki/Maven-Overlay-Project-How-To) of the [MITREid Connect](https://github.com/mitreid-connect/OpenID-Connect-Java-Spring-Server) server.
 - ```simple-web-app```- A copy of MITREid Connect's [simple-web-app](https://github.com/mitreid-connect/simple-web-app), which demonstrates usage of their client library.
 
-It also serves as a [repository-based CloudLab profile](http://docs.cloudlab.us/creating-profiles.html). The profile is defined in `profile.py`, which invokes `setup.sh` to provision the node.
+It also serves as a [repository-based CloudLab profile](http://docs.cloudlab.us/creating-profiles.html). The profile is defined in `profile.py`, which invokes `setup.sh` to provision the nodes.
 
 ## Getting Started
 
@@ -45,4 +45,4 @@ The server is set up by default with an in-memory database containing users `use
 
 ## Deployment
 
-This project can be deployed to CloudLab by creating a [repository-based profile](http://docs.cloudlab.us/creating-profiles.html) using the URL to this repository (https://bitbucket.org/dinsaa/oauth2-w-oidc.git). Once instantiated, you can find the hostname from the experiment's 'List View' to determine the URLs (e.g. http://aptvm072-1.apt.emulab.net:8080/oidc-server/ and http://aptvm072-1.apt.emulab.net:8080/simple-web-app/).
+This project can be deployed to CloudLab by creating a [repository-based profile](http://docs.cloudlab.us/creating-profiles.html) using the URL to this repository (https://bitbucket.org/dinsaa/oauth2-w-oidc.git). Once instantiated, you can find the hostnames for each node from the experiment's 'List View' to determine the URLs (e.g. http://aptvm067-1.apt.emulab.net:8080/oidc-server/ and http://aptvm070-1.apt.emulab.net:8080/simple-web-app/).
