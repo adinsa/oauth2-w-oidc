@@ -33,7 +33,7 @@ You will need the following installed on your system:
 
     ```
     $ sudo cp oidc-server/target/oidc-server.war /var/lib/tomcat8/webapps/
-    ```
+    ```  
     ```
     $ sudo cp simple-web-app/target/simple-web-app.war /var/lib/tomcat8/webapps/
     ```
