@@ -1,4 +1,4 @@
-"""A git repository-based CloudLab profile containing a single node running Ubuntu.""" 
+"""A git repository-based CloudLab profile containing two nodes running Ubuntu.""" 
 
 # Import the Portal object.
 import geni.portal as portal
@@ -13,13 +13,19 @@ pc = portal.Context()
 # Create a Request object to start building the RSpec.
 request = pc.makeRequestRSpec()
 
-node = request.XenVM('node1')
-node.routable_control_ip = True
-node.disk_image = 'urn:publicid:IDN+apt.emulab.net+image+emulab-ops//UBUNTU14-10-64-STD'
-node.Site('28')
+# Setup 'oidc-server' node
+server_node = request.XenVM('oidc-server')
+server_node.routable_control_ip = True
+server_node.disk_image = 'urn:publicid:IDN+apt.emulab.net+image+emulab-ops//UBUNTU14-10-64-STD'
+server_node.Site('Site 1')
+server_node.addService(pg.Execute(shell="sh", command="/local/repository/setup.sh oidc-server"))
 
-# Install and execute setup script that is contained in the repository.
-node.addService(pg.Execute(shell="sh", command="/local/repository/setup.sh"))
+# Setup 'simple-web-app' node
+simple_web_app_node = request.XenVM('simple-web-app')
+simple_web_app_node.routable_control_ip = True
+simple_web_app_node.disk_image = 'urn:publicid:IDN+apt.emulab.net+image+emulab-ops//UBUNTU14-10-64-STD'
+simple_web_app_node.Site('Site 1')
+simple_web_app_node.addService(pg.Execute(shell="sh", command="/local/repository/setup.sh simple-web-app"))
 
 # Print the generated rspec
 pc.printRequestRSpec(request)
