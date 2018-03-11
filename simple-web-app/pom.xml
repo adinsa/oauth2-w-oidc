@@ -158,9 +158,19 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.4</version>
-				<configuration>
-					<warName>${project.artifactId}</warName>
-				</configuration>
+                <configuration>
+                  <warName>${project.artifactId}</warName>
+                  <webResources>
+                    <webResource>
+                      <directory>${basedir}/src/main/webapp/WEB-INF</directory>
+                      <filtering>true</filtering>
+                      <targetPath>WEB-INF</targetPath>
+                      <includes>
+                        <include>**/servlet-context.xml</include>
+                      </includes>
+                    </webResource>
+                  </webResources>
+                </configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
