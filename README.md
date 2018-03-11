@@ -22,6 +22,11 @@ You will need the following installed on your system:
     ```
     $ mvn clean package -Dserver.port=8000 -Dclient.port=8001 
     ```
+    If packaging locally is not an option or you run into errors with local packaging, you can use Docker to build the packages:
+
+    ```
+    $  docker run --rm -it -v $(pwd):/external -w /external maven mvn package
+    ```
 
 2. Run:
 
