@@ -28,6 +28,7 @@ You will need the following installed on your system:
     ```
     $  docker run --rm -it -v $(pwd):/external -w /external maven mvn package
     ```
+    
     This will build the war files in the docker container and save them to the current directory on the host. The container will be disposed after the build completes. 
 
 2. Run:
