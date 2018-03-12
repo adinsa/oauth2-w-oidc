@@ -26,7 +26,7 @@ You will need the following installed on your system:
     If packaging locally is not an option or you run into errors with local packaging, you can use Docker to build the packages:
 
     ```
-    $ docker run --rm -it -v $(pwd):/external -w /external maven mvn package
+    $ docker run --rm -it -v $(pwd):/project maven mvn package -f /project
     ```
     
     This will build the war files in the docker container and save them to the current directory on the host. The container will be disposed after the build completes. 
