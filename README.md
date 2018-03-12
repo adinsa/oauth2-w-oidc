@@ -25,13 +25,28 @@ You will need the following installed on your system:
     If packaging locally is not an option or you run into errors with local packaging, you can use Docker to build the packages:
 
     ```
-    $  docker run --rm -it -v $(pwd):/external -w /external maven mvn package
+    $ docker run --rm -it -v $(pwd):/external -w /external maven mvn package
     ```
+    This will build the war files in the docker container and save them to the current directory on the host. The container will be disposed after the build completes. 
 
 2. Run:
 
     ```
     $ docker-compose up
+    ```
+    or, to run in detached mode:
+    
+    ```
+    $ docker-compose up -d
+    ```
+    to list the running containers:
+    ```
+    $ docker-compose ps 
+    ```
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or
+    
+    ```
+    $ docker ps
     ```
 
 The server is accessible at [http://localhost:8000/oidc-server/](http://localhost:8000/oidc-server/).  
