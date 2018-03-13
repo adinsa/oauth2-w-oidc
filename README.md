@@ -45,7 +45,7 @@ You will need the following installed on your system:
     ```
     $ docker-compose ps 
     ```
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or
+    or
     
     ```
     $ docker ps

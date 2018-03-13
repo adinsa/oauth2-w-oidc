@@ -7,6 +7,7 @@ services:
       - "8000:8080"
     volumes:
       - ./oidc-server/target/oidc-server.war:/usr/local/tomcat/webapps/oidc-server.war
+    container_name: honest-oidc-server
         
   simple-web-app:
     image: tomcat:latest
@@ -14,3 +15,4 @@ services:
       - "8001:8080"
     volumes:
       - ./simple-web-app/target/simple-web-app.war:/usr/local/tomcat/webapps/simple-web-app.war
+    container_name: oidc-client
