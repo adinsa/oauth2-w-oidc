@@ -5,13 +5,19 @@ services:
     image: tomcat:latest
     ports:
       - "8080:8080"
+      - "9090:9090"
     volumes:
       - ./oidc-server/target/oidc-server.war:/usr/local/tomcat/webapps/oidc-server.war
     container_name: honest-oidc-server
+    environment:
+      - JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,address=9090,server=y,suspend=n"
   simple-web-app:
     image: tomcat:latest
     ports:
       - "8081:8080"
+      - "9091:9091"
     volumes:
       - ./simple-web-app/target/simple-web-app.war:/usr/local/tomcat/webapps/simple-web-app.war
     container_name: oidc-client
+    environment:
+      - JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,address=9091,server=y,suspend=n"
