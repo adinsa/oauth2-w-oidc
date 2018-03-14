@@ -20,7 +20,7 @@ You will need the following installed on your system:
 1. Build it, supplying ```server.port``` for oidc-server and ```client.port``` for simple-web-app to match those specified in docker-compose.yml: 
 
     ```
-    $ mvn clean package -Dserver.port=8000 -Dclient.port=8001 
+    $ mvn clean package -Dserver.port=8080 -Dclient.port=8081 
     ```
     
     If packaging locally is not an option or you run into errors with local packaging, you can use Docker to build the packages:
@@ -51,7 +51,7 @@ You will need the following installed on your system:
     $ docker ps
     ```
 
-The server is accessible at [http://localhost:8000/oidc-server/](http://localhost:8000/oidc-server/).  
-The client app is accessible at [http://localhost:8001/simple-web-app/](http://localhost:8001/simple-web-app/).
+The server is accessible at [http://localhost:8080/oidc-server/](http://localhost:8080/oidc-server/).  
+The client app is accessible at [http://localhost:8081/simple-web-app/](http://localhost:8081/simple-web-app/).
 
 The server is set up by default with an in-memory database containing users `user`/`password` and `admin`/`password`.
