@@ -20,13 +20,13 @@ You will need the following installed on your system:
 1. Build it, supplying ```server.port``` for oidc-server and ```client.port``` for simple-web-app to match those specified in docker-compose.yml: 
 
     ```
-    $ mvn clean package -Dhost.name={host name} -Dserver.port=8000 -Dclient.port=8001 
+    $ mvn clean package -Dhost.name={host name} -Dserver.port=8080 -Dclient.port=8081 
     ```
     
     If packaging locally is not an option or you run into errors with local packaging, you can use Docker to build the packages:
 
     ```
-    $ docker run --rm -it -v $(pwd):/project mvn clean package -Dhost.name={host name} -Dserver.port=8000 -Dclient.port=8001 
+    $ docker run --rm -it -v $(pwd):/project mvn clean package -Dhost.name={host name} -Dserver.port=8080 -Dclient.port=8081 
     ```
     
     This will build the war files in the docker container and save them to the current directory on the host. The container will be disposed after the build completes. 

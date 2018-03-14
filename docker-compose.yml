@@ -1,4 +1,4 @@
-version: "3"
+version: "3.2"
 
 services:
   oidc-server:
@@ -8,9 +8,13 @@ services:
       - "9090:9090"
     volumes:
       - ./oidc-server/target/oidc-server.war:/usr/local/tomcat/webapps/oidc-server.war
-    container_name: honest-oidc-server
+      - type: bind
+        source: ./configs/oidc-server/usr/local/tomcat/conf/
+        target: /usr/local/tomcat/conf
+    container_name: oidc-server
     environment:
       - JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,address=9090,server=y,suspend=n"
+
   simple-web-app:
     image: tomcat:latest
     ports:

@@ -4,3 +4,6 @@ target/
 .classpath
 .vscode/
 .idea/
+.iml
+oidc-server/oidc-server.iml
+oauth2-w-oidc.iml

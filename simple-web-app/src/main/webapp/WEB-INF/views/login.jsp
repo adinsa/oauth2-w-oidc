@@ -43,7 +43,7 @@
 <script type="text/javascript">
 	$(document).ready(function () {
 		$('#localhost').on('click', function() {
-			$('#identifier').val('http://localhost:8080/openid-connect-server-webapp/');
+			$('#identifier').val('http://<replace with hostname>:8080/oidc-server/');
 		});
 		$('#mitreidorg').on('click', function() {
 			$('#identifier').val('user@mitreid.org');
