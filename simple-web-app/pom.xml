@@ -167,6 +167,7 @@
                       <targetPath>WEB-INF</targetPath>
                       <includes>
                         <include>**/servlet-context.xml</include>
+                        <include>**/login.jsp</include>
                       </includes>
                     </webResource>
                   </webResources>

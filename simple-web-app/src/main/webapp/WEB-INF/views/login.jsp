@@ -43,7 +43,7 @@
 <script type="text/javascript">
 	$(document).ready(function () {
 		$('#localhost').on('click', function() {
-			$('#identifier').val('http://<replace with hostname>:8080/oidc-server/');
+			$('#identifier').val('http://${host.name}:${server.port}/oidc-server/');
 		});
 		$('#mitreidorg').on('click', function() {
 			$('#identifier').val('user@mitreid.org');
