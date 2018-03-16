@@ -7,48 +7,48 @@ It is a Maven project with the following modules:
 - ```oidc-server```- A simple [overlay](https://github.com/mitreid-connect/OpenID-Connect-Java-Spring-Server/wiki/Maven-Overlay-Project-How-To) of the [MITREid Connect](https://github.com/mitreid-connect/OpenID-Connect-Java-Spring-Server) server.
 - ```simple-web-app```- A copy of MITREid Connect's [simple-web-app](https://github.com/mitreid-connect/simple-web-app), which demonstrates usage of their client library.
 
-### Prerequisites
+## Prerequisites
 
 You will need the following installed on your system:
 
- - [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
- - [Maven](https://maven.apache.org/)
- - [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
+- [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+- [Maven](https://maven.apache.org/)
+- [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
 
-### Installing
+## Installing
 
 1. Build it, supplying ```server.port``` for oidc-server and ```client.port``` for simple-web-app to match those specified in docker-compose.yml: 
 
+    ```bash
+    mvn clean package -Dhost.name={host name} -Dserver.port=8080 -Dclient.port=8081 
     ```
-    $ mvn clean package -Dhost.name={host name} -Dserver.port=8080 -Dclient.port=8081 
-    ```
-    
+
     If packaging locally is not an option or you run into errors with local packaging, you can use Docker to build the packages:
 
+    ```bash
+    docker run --rm -it -v $(pwd):/project mvn clean package -Dhost.name={host name} -Dserver.port=8080 -Dclient.port=8081
     ```
-    $ docker run --rm -it -v $(pwd):/project mvn clean package -Dhost.name={host name} -Dserver.port=8080 -Dclient.port=8081 
-    ```
-    
-    This will build the war files in the docker container and save them to the current directory on the host. The container will be disposed after the build completes. 
+
+    This will build the war files in the docker container and save them to the current directory on the host. The container will be disposed after the build completes.
 
 2. Run:
 
-    ```
-    $ docker-compose up
+    ```bash
+    docker-compose up
     ```
     or, to run in detached mode:
-    
-    ```
-    $ docker-compose up -d
+
+    ```bash
+    docker-compose up -d
     ```
     to list the running containers:
-    ```
-    $ docker-compose ps 
+    ```bash
+    docker-compose ps
     ```
     or
-    
-    ```
-    $ docker ps
+
+    ```bash
+    docker ps
     ```
 
 The server is accessible at [http://localhost:8000/oidc-server/](http://localhost:8000/oidc-server/).  
