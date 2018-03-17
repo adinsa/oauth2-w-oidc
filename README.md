@@ -17,7 +17,7 @@ You will need the following installed on your system:
 
 ## Installing
 
-1. Add entries to your ```/etc/hosts``` file that maps ```oidc-server``` and ```simple-web-app`` to your loopback interface. On my system this looks like:
+1. Add entries to your ```/etc/hosts``` file that maps ```oidc-server``` and ```simple-web-app``` to your loopback interface. On my system this looks like:
 
     ```bash
     127.0.1.1       oidc-server
