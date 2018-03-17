@@ -95,7 +95,7 @@
 		-->
 		<bean class="org.mitre.openid.connect.client.SubjectIssuerGrantedAuthority">
 			<constructor-arg name="subject" value="90342.ASDFJWFA" />
-			<constructor-arg name="issuer" value="http://${host.name}:${server.port}/oidc-server/" />
+			<constructor-arg name="issuer" value="http://${server.host}/oidc-server/" />
 		</bean>
 	</util:set>
 
@@ -129,7 +129,7 @@
 		Static issuer service, returns the same issuer for every request.
 	-->
 	<bean class="org.mitre.openid.connect.client.service.impl.StaticSingleIssuerService" id="staticIssuerService">
-		<property name="issuer" value="http://${host.name}:${server.port}/oidc-server/" />
+		<property name="issuer" value="http://${server.host}/oidc-server/" />
 	</bean>	
 
 	<!-- 
@@ -176,13 +176,13 @@
 	<bean class="org.mitre.openid.connect.client.service.impl.StaticServerConfigurationService">
 		<property name="servers">
 			<map>
-				<entry key="http://${host.name}:${server.port}/oidc-server/">
+				<entry key="http://${server.host}/oidc-server/">
 					<bean class="org.mitre.openid.connect.config.ServerConfiguration">
-						<property name="issuer" value="http://${host.name}:${server.port}/oidc-server/" />
-						<property name="authorizationEndpointUri"	value="http://${host.name}:${server.port}/oidc-server/authorize" />
-						<property name="tokenEndpointUri"	value="http://${host.name}:${server.port}/oidc-server/token" />
-						<property name="userInfoUri" value="http://${host.name}:${server.port}/oidc-server/userinfo" />
-						<property name="jwksUri" value="http://${host.name}:${server.port}/oidc-server/jwk" />
+						<property name="issuer" value="http://${server.host}/oidc-server/" />
+						<property name="authorizationEndpointUri"	value="http://${server.host}/oidc-server/authorize" />
+						<property name="tokenEndpointUri"	value="http://${server.host}/oidc-server/token" />
+						<property name="userInfoUri" value="http://${server.host}/oidc-server/userinfo" />
+						<property name="jwksUri" value="http://${server.host}/oidc-server/jwk" />
 					</bean>
 				</entry>
 			</map>
@@ -201,13 +201,13 @@
 	<bean class="org.mitre.openid.connect.client.service.impl.HybridServerConfigurationService">
 		<property name="servers">
 			<map>
-				<entry key="http://${host.name}:${server.port}/oidc-server/">
+				<entry key="http://${server.host}/oidc-server/">
 					<bean class="org.mitre.openid.connect.config.ServerConfiguration">
-						<property name="issuer" value="http://${host.name}:${server.port}/oidc-server/" />
-						<property name="authorizationEndpointUri"	value="http://${host.name}:${server.port}/oidc-server/authorize" />
-						<property name="tokenEndpointUri"	value="http://${host.name}:${server.port}/oidc-server/token" />
-						<property name="userInfoUri" value="http://${host.name}:${server.port}/oidc-server/userinfo" />
-						<property name="jwksUri" value="http://${host.name}:${server.port}/oidc-server/jwk" />
+						<property name="issuer" value="http://${server.host}/oidc-server/" />
+						<property name="authorizationEndpointUri"	value="http://${server.host}/oidc-server/authorize" />
+						<property name="tokenEndpointUri"	value="http://${server.host}/oidc-server/token" />
+						<property name="userInfoUri" value="http://${server.host}/oidc-server/userinfo" />
+						<property name="jwksUri" value="http://${server.host}/oidc-server/jwk" />
 					</bean>
 				</entry>
 			</map>
@@ -246,12 +246,12 @@
 				<property name="tokenEndpointAuthMethod" value="SECRET_BASIC" />
 				<property name="redirectUris">
 					<set>
-						<value>http://${host.name}:${client.port}/simple-web-app/openid_connect_login</value>
+						<value>http://${client.host}/simple-web-app/openid_connect_login</value>
 					</set>
 				</property>
 				<!-- for signed requests -->
 				<property name="requestObjectSigningAlg" value="RS256" />
-				<property name="jwksUri" value="http://${host.name}:${client.port}/simple-web-app/jwk" />
+				<property name="jwksUri" value="http://${client.host}/simple-web-app/jwk" />
 			</bean>
 		</property>
 		<!-- 
@@ -276,7 +276,7 @@
 	<bean class="org.mitre.openid.connect.client.service.impl.StaticClientConfigurationService" id="staticClientConfigurationService">
 		<property name="clients">
 			<map>
-				<entry key="http://${host.name}:${server.port}/oidc-server/">
+				<entry key="http://${server.host}/oidc-server/">
 					<bean class="org.mitre.oauth2.model.RegisteredClient">
 						<property name="clientId" value="client" />
 						<property name="clientSecret" value="secret" />
@@ -292,7 +292,7 @@
 						<property name="tokenEndpointAuthMethod" value="SECRET_BASIC" />
 						<property name="redirectUris">
 							<set>
-								<value>http://${host.name}:${client.port}/simple-web-app/openid_connect_login</value>
+								<value>http://${client.host}/simple-web-app/openid_connect_login</value>
 							</set>
 						</property>
 					</bean>
@@ -308,7 +308,7 @@
 	<bean class="org.mitre.openid.connect.client.service.impl.HybridClientConfigurationService" id="hybridClientConfigurationService">
 		<property name="clients">
 			<map>
-				<entry key="http://${host.name}:${server.port}/oidc-server/">
+				<entry key="http://${server.host}/oidc-server/">
 					<bean class="org.mitre.oauth2.model.RegisteredClient">
 						<property name="clientId" value="client" />
 						<property name="clientSecret" value="secret" />
@@ -324,7 +324,7 @@
 						<property name="tokenEndpointAuthMethod" value="SECRET_BASIC" />
 						<property name="redirectUris">
 							<set>
-								<value>http://${host.name}:${client.port}/simple-web-app/openid_connect_login</value>
+								<value>http://${client.host}/simple-web-app/openid_connect_login</value>
 							</set>
 						</property>
 						
@@ -347,7 +347,7 @@
 				<property name="tokenEndpointAuthMethod" value="SECRET_BASIC" />
 				<property name="redirectUris">
 					<set>
-						<value>http://${host.name}:${client.port}/simple-web-app/openid_connect_login</value>
+						<value>http://${client.host}/simple-web-app/openid_connect_login</value>
 					</set>
 				</property>
 			</bean>

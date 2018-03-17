@@ -1,11 +1,20 @@
 version: "3.2"
 
 services:
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
   oidc-server:
     image: tomcat:latest
     ports:
-      - "8080:8080"
       - "9090:9090"
+    expose:
+      - "80"
     volumes:
       - ./oidc-server/target/oidc-server.war:/usr/local/tomcat/webapps/oidc-server.war
       - type: bind
@@ -14,14 +23,20 @@ services:
     container_name: oidc-server
     environment:
       - JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,address=9090,server=y,suspend=n"
+      - VIRTUAL_HOST=oidc-server
 
   simple-web-app:
     image: tomcat:latest
     ports:
-      - "8081:8080"
-      - "9091:9091"
+      - "9091:9090"
+    expose:
+      - "80"
     volumes:
       - ./simple-web-app/target/simple-web-app.war:/usr/local/tomcat/webapps/simple-web-app.war
+      - type: bind
+        source: ./configs/simple-web-app/tomcat
+        target: /usr/local/tomcat/conf
     container_name: oidc-client
     environment:
-      - JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,address=9091,server=y,suspend=n"
+      - JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,address=9090,server=y,suspend=n"
+      - VIRTUAL_HOST=simple-web-app
