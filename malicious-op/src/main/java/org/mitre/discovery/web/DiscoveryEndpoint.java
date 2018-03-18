@@ -59,7 +59,6 @@ import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 
 /**
- *
  * Handle OpenID Connect Discovery.
  * <p>
  * This is currently just a copy of the original implementation, but will be modified to behave maliciously.
@@ -71,105 +70,104 @@ import com.nimbusds.jose.JWSAlgorithm;
 @Controller
 public class DiscoveryEndpoint {
 
-	public static final String WELL_KNOWN_URL = ".well-known";
-	public static final String OPENID_CONFIGURATION_URL = WELL_KNOWN_URL + "/openid-configuration";
-	public static final String WEBFINGER_URL = WELL_KNOWN_URL + "/webfinger";
+    public static final String WELL_KNOWN_URL = ".well-known";
+    public static final String OPENID_CONFIGURATION_URL = WELL_KNOWN_URL + "/openid-configuration";
+    public static final String WEBFINGER_URL = WELL_KNOWN_URL + "/webfinger";
 
-	/**
-	 * Logger for this class
-	 */
-	private static final Logger logger = LoggerFactory.getLogger(DiscoveryEndpoint.class);
+    /**
+     * Logger for this class
+     */
+    private static final Logger logger = LoggerFactory.getLogger(DiscoveryEndpoint.class);
 
-	@Autowired
-	private ConfigurationPropertiesBean config;
+    @Autowired
+    private ConfigurationPropertiesBean config;
 
-	@Autowired
-	private SystemScopeService scopeService;
+    @Autowired
+    private SystemScopeService scopeService;
 
-	@Autowired
-	private JWTSigningAndValidationService signService;
+    @Autowired
+    private JWTSigningAndValidationService signService;
 
-	@Autowired
-	private JWTEncryptionAndDecryptionService encService;
+    @Autowired
+    private JWTEncryptionAndDecryptionService encService;
 
-	@Autowired
-	private UserInfoService userService;
+    @Autowired
+    private UserInfoService userService;
 
+    // used to map JWA algorithms objects to strings
+    private final Function<Algorithm, String> toAlgorithmName = alg -> {
+        if (alg == null) {
+            return null;
+        } else {
+            return alg.getName();
+        }
+    };
 
-	// used to map JWA algorithms objects to strings
-	private Function<Algorithm, String> toAlgorithmName = new Function<Algorithm, String>() {
-		@Override
-		public String apply(Algorithm alg) {
-			if (alg == null) {
-				return null;
-			} else {
-				return alg.getName();
-			}
-		}
-	};
+    @RequestMapping(value = { "/" + WEBFINGER_URL }, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String webfinger(@RequestParam("resource") final String resource,
+            @RequestParam(value = "rel", required = false) final String rel, final Model model) {
 
-	@RequestMapping(value={"/" + WEBFINGER_URL}, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String webfinger(@RequestParam("resource") String resource, @RequestParam(value = "rel", required = false) String rel, Model model) {
+        if (!Strings.isNullOrEmpty(rel) && !rel.equals("http://openid.net/specs/connect/1.0/issuer")) {
+            logger.warn("Responding to webfinger request for non-OIDC relation: " + rel);
+        }
 
-		if (!Strings.isNullOrEmpty(rel) && !rel.equals("http://openid.net/specs/connect/1.0/issuer")) {
-			logger.warn("Responding to webfinger request for non-OIDC relation: " + rel);
-		}
+        if (!resource.equals(config.getIssuer())) {
+            // it's not the issuer directly, need to check other methods
 
-		if (!resource.equals(config.getIssuer())) {
-			// it's not the issuer directly, need to check other methods
+            final UriComponents resourceUri = WebfingerURLNormalizer.normalizeResource(resource);
+            if (resourceUri != null && resourceUri.getScheme() != null && resourceUri.getScheme().equals("acct")) {
+                // acct: URI (email address format)
 
-			UriComponents resourceUri = WebfingerURLNormalizer.normalizeResource(resource);
-			if (resourceUri != null
-					&& resourceUri.getScheme() != null
-					&& resourceUri.getScheme().equals("acct")) {
-				// acct: URI (email address format)
+                // check on email addresses first
+                UserInfo user = userService.getByEmailAddress(resourceUri.getUserInfo() + "@" + resourceUri.getHost());
 
-				// check on email addresses first
-				UserInfo user = userService.getByEmailAddress(resourceUri.getUserInfo() + "@" + resourceUri.getHost());
+                if (user == null) {
+                    // user wasn't found, see if the local part of the username matches, plus our
+                    // issuer host
 
-				if (user == null) {
-					// user wasn't found, see if the local part of the username matches, plus our issuer host
+                    user = userService.getByUsername(resourceUri.getUserInfo()); // first part is the username
 
-					user = userService.getByUsername(resourceUri.getUserInfo()); // first part is the username
+                    if (user != null) {
+                        // username matched, check the host component
+                        final UriComponents issuerComponents = UriComponentsBuilder.fromHttpUrl(config.getIssuer())
+                                .build();
+                        if (!Strings.nullToEmpty(issuerComponents.getHost())
+                                .equals(Strings.nullToEmpty(resourceUri.getHost()))) {
+                            logger.info("Host mismatch, expected " + issuerComponents.getHost() + " got "
+                                    + resourceUri.getHost());
+                            model.addAttribute(HttpCodeView.CODE, HttpStatus.NOT_FOUND);
+                            return HttpCodeView.VIEWNAME;
+                        }
 
-					if (user != null) {
-						// username matched, check the host component
-						UriComponents issuerComponents = UriComponentsBuilder.fromHttpUrl(config.getIssuer()).build();
-						if (!Strings.nullToEmpty(issuerComponents.getHost())
-								.equals(Strings.nullToEmpty(resourceUri.getHost()))) {
-							logger.info("Host mismatch, expected " + issuerComponents.getHost() + " got " + resourceUri.getHost());
-							model.addAttribute(HttpCodeView.CODE, HttpStatus.NOT_FOUND);
-							return HttpCodeView.VIEWNAME;
-						}
+                    } else {
 
-					} else {
+                        // if the user's still null, punt and say we didn't find them
 
-						// if the user's still null, punt and say we didn't find them
+                        logger.info("User not found: " + resource);
+                        model.addAttribute(HttpCodeView.CODE, HttpStatus.NOT_FOUND);
+                        return HttpCodeView.VIEWNAME;
+                    }
 
-						logger.info("User not found: " + resource);
-						model.addAttribute(HttpCodeView.CODE, HttpStatus.NOT_FOUND);
-						return HttpCodeView.VIEWNAME;
-					}
+                }
 
-				}
+            } else {
+                logger.info("Unknown URI format: " + resource);
+                model.addAttribute(HttpCodeView.CODE, HttpStatus.NOT_FOUND);
+                return HttpCodeView.VIEWNAME;
+            }
+        }
 
-			} else {
-				logger.info("Unknown URI format: " + resource);
-				model.addAttribute(HttpCodeView.CODE, HttpStatus.NOT_FOUND);
-				return HttpCodeView.VIEWNAME;
-			}
-		}
+        // if we got here, then we're good, return ourselves
+        model.addAttribute("resource", resource);
+        model.addAttribute("issuer", config.getIssuer());
 
-		// if we got here, then we're good, return ourselves
-		model.addAttribute("resource", resource);
-		model.addAttribute("issuer", config.getIssuer());
+        return "webfingerView";
+    }
 
-		return "webfingerView";
-	}
+    @RequestMapping("/" + OPENID_CONFIGURATION_URL)
+    public String providerConfiguration(final Model model) {
 
-	@RequestMapping("/" + OPENID_CONFIGURATION_URL)
-	public String providerConfiguration(Model model) {
-
+        // @formatter:off
 	    /*
 		    issuer
 		        REQUIRED. URL using the https scheme with no query or fragment component that the OP asserts as its Issuer Identifier.
@@ -289,95 +287,118 @@ public class DiscoveryEndpoint {
 		        OPTIONAL. URL that the OpenID Provider provides to the person registering the Client to read about OpenID Provider's terms of service.
 		        The registration process SHOULD display this URL to the person registering the Client if it is given.
 		 */
-		String baseUrl = config.getIssuer();
+	    // @formatter:on
 
-		if (!baseUrl.endsWith("/")) {
-			logger.debug("Configured issuer doesn't end in /, adding for discovery: {}", baseUrl);
-			baseUrl = baseUrl.concat("/");
-		}
+        String baseUrl = config.getIssuer();
 
-		signService.getAllSigningAlgsSupported();
-		Lists.newArrayList(JWSAlgorithm.HS256, JWSAlgorithm.HS384, JWSAlgorithm.HS512);
-		Collection<JWSAlgorithm> clientSymmetricAndAsymmetricSigningAlgs = Lists.newArrayList(JWSAlgorithm.HS256, JWSAlgorithm.HS384, JWSAlgorithm.HS512,
-				JWSAlgorithm.RS256, JWSAlgorithm.RS384, JWSAlgorithm.RS512,
-				JWSAlgorithm.ES256, JWSAlgorithm.ES384, JWSAlgorithm.ES512,
-				JWSAlgorithm.PS256, JWSAlgorithm.PS384, JWSAlgorithm.PS512);
-		Collection<Algorithm> clientSymmetricAndAsymmetricSigningAlgsWithNone = Lists.newArrayList(JWSAlgorithm.HS256, JWSAlgorithm.HS384, JWSAlgorithm.HS512,
-				JWSAlgorithm.RS256, JWSAlgorithm.RS384, JWSAlgorithm.RS512,
-				JWSAlgorithm.ES256, JWSAlgorithm.ES384, JWSAlgorithm.ES512,
-				JWSAlgorithm.PS256, JWSAlgorithm.PS384, JWSAlgorithm.PS512,
-				Algorithm.NONE);
-		ArrayList<String> grantTypes = Lists.newArrayList("authorization_code", "implicit", "urn:ietf:params:oauth:grant-type:jwt-bearer", "client_credentials", "urn:ietf:params:oauth:grant_type:redelegate", "urn:ietf:params:oauth:grant-type:device_code");
+        if (!baseUrl.endsWith("/")) {
+            logger.debug("Configured issuer doesn't end in /, adding for discovery: {}", baseUrl);
+            baseUrl = baseUrl.concat("/");
+        }
 
-		Map<String, Object> m = new HashMap<>();
-		m.put("issuer", config.getIssuer());
-		m.put("authorization_endpoint", baseUrl + "authorize");
-		m.put("token_endpoint", baseUrl + "token");
-		m.put("userinfo_endpoint", baseUrl + UserInfoEndpoint.URL);
-		//check_session_iframe
-		m.put("end_session_endpoint", baseUrl + EndSessionEndpoint.URL);
-		m.put("jwks_uri", baseUrl + JWKSetPublishingEndpoint.URL);
-		m.put("registration_endpoint", baseUrl + DynamicClientRegistrationEndpoint.URL);
-		m.put("scopes_supported", scopeService.toStrings(scopeService.getUnrestricted())); // these are the scopes that you can dynamically register for, which is what matters for discovery
-		m.put("response_types_supported", Lists.newArrayList("code", "token")); // we don't support these yet: , "id_token", "id_token token"));
-		m.put("grant_types_supported", grantTypes);
-		//acr_values_supported
-		m.put("subject_types_supported", Lists.newArrayList("public", "pairwise"));
-		m.put("userinfo_signing_alg_values_supported", Collections2.transform(clientSymmetricAndAsymmetricSigningAlgs, toAlgorithmName));
-		m.put("userinfo_encryption_alg_values_supported", Collections2.transform(encService.getAllEncryptionAlgsSupported(), toAlgorithmName));
-		m.put("userinfo_encryption_enc_values_supported", Collections2.transform(encService.getAllEncryptionEncsSupported(), toAlgorithmName));
-		m.put("id_token_signing_alg_values_supported", Collections2.transform(clientSymmetricAndAsymmetricSigningAlgsWithNone, toAlgorithmName));
-		m.put("id_token_encryption_alg_values_supported", Collections2.transform(encService.getAllEncryptionAlgsSupported(), toAlgorithmName));
-		m.put("id_token_encryption_enc_values_supported", Collections2.transform(encService.getAllEncryptionEncsSupported(), toAlgorithmName));
-		m.put("request_object_signing_alg_values_supported", Collections2.transform(clientSymmetricAndAsymmetricSigningAlgs, toAlgorithmName));
-		m.put("request_object_encryption_alg_values_supported", Collections2.transform(encService.getAllEncryptionAlgsSupported(), toAlgorithmName));
-		m.put("request_object_encryption_enc_values_supported", Collections2.transform(encService.getAllEncryptionEncsSupported(), toAlgorithmName));
-		m.put("token_endpoint_auth_methods_supported", Lists.newArrayList("client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt", "none"));
-		m.put("token_endpoint_auth_signing_alg_values_supported", Collections2.transform(clientSymmetricAndAsymmetricSigningAlgs, toAlgorithmName));
-		//display_types_supported
-		m.put("claim_types_supported", Lists.newArrayList("normal" /*, "aggregated", "distributed"*/));
-		m.put("claims_supported", Lists.newArrayList(
-				"sub",
-				"name",
-				"preferred_username",
-				"given_name",
-				"family_name",
-				"middle_name",
-				"nickname",
-				"profile",
-				"picture",
-				"website",
-				"gender",
-				"zoneinfo",
-				"locale",
-				"updated_at",
-				"birthdate",
-				"email",
-				"email_verified",
-				"phone_number",
-				"phone_number_verified",
-				"address"
-				));
-		m.put("service_documentation", baseUrl + "about");
-		//claims_locales_supported
-		//ui_locales_supported
-		m.put("claims_parameter_supported", false);
-		m.put("request_parameter_supported", true);
-		m.put("request_uri_parameter_supported", false);
-		m.put("require_request_uri_registration", false);
-		m.put("op_policy_uri", baseUrl + "about");
-		m.put("op_tos_uri", baseUrl + "about");
+        signService.getAllSigningAlgsSupported();
+        Lists.newArrayList(JWSAlgorithm.HS256, JWSAlgorithm.HS384, JWSAlgorithm.HS512);
+        final Collection<JWSAlgorithm> clientSymmetricAndAsymmetricSigningAlgs = Lists.newArrayList(
+                JWSAlgorithm.HS256, JWSAlgorithm.HS384, JWSAlgorithm.HS512,
+                JWSAlgorithm.RS256, JWSAlgorithm.RS384, JWSAlgorithm.RS512,
+                JWSAlgorithm.ES256, JWSAlgorithm.ES384, JWSAlgorithm.ES512,
+                JWSAlgorithm.PS256, JWSAlgorithm.PS384, JWSAlgorithm.PS512);
+        final Collection<Algorithm> clientSymmetricAndAsymmetricSigningAlgsWithNone = Lists.newArrayList(
+                JWSAlgorithm.HS256, JWSAlgorithm.HS384, JWSAlgorithm.HS512,
+                JWSAlgorithm.RS256, JWSAlgorithm.RS384, JWSAlgorithm.RS512,
+                JWSAlgorithm.ES256, JWSAlgorithm.ES384, JWSAlgorithm.ES512,
+                JWSAlgorithm.PS256, JWSAlgorithm.PS384, JWSAlgorithm.PS512,
+                Algorithm.NONE);
+        final ArrayList<String> grantTypes = Lists.newArrayList("authorization_code", "implicit",
+                "urn:ietf:params:oauth:grant-type:jwt-bearer", "client_credentials",
+                "urn:ietf:params:oauth:grant_type:redelegate", "urn:ietf:params:oauth:grant-type:device_code");
 
-		m.put("introspection_endpoint", baseUrl + IntrospectionEndpoint.URL); // token introspection endpoint for verifying tokens
-		m.put("revocation_endpoint", baseUrl + RevocationEndpoint.URL); // token revocation endpoint
+        final Map<String, Object> m = new HashMap<>();
+        m.put("issuer", config.getIssuer());
+        m.put("authorization_endpoint", baseUrl + "authorize");
+        m.put("token_endpoint", baseUrl + "token");
+        m.put("userinfo_endpoint", baseUrl + UserInfoEndpoint.URL);
+        // check_session_iframe
+        m.put("end_session_endpoint", baseUrl + EndSessionEndpoint.URL);
+        m.put("jwks_uri", baseUrl + JWKSetPublishingEndpoint.URL);
+        m.put("registration_endpoint", baseUrl + DynamicClientRegistrationEndpoint.URL);
+        m.put("scopes_supported", scopeService.toStrings(scopeService.getUnrestricted())); // these are the scopes that
+                                                                                           // you can dynamically
+                                                                                           // register for, which is
+                                                                                           // what
+                                                                                           // matters for discovery
+        m.put("response_types_supported", Lists.newArrayList("code", "token")); // we don't support these yet: ,
+                                                                                // "id_token", "id_token token"));
+        m.put("grant_types_supported", grantTypes);
+        // acr_values_supported
+        m.put("subject_types_supported", Lists.newArrayList("public", "pairwise"));
+        m.put("userinfo_signing_alg_values_supported",
+                Collections2.transform(clientSymmetricAndAsymmetricSigningAlgs, toAlgorithmName));
+        m.put("userinfo_encryption_alg_values_supported",
+                Collections2.transform(encService.getAllEncryptionAlgsSupported(), toAlgorithmName));
+        m.put("userinfo_encryption_enc_values_supported",
+                Collections2.transform(encService.getAllEncryptionEncsSupported(), toAlgorithmName));
+        m.put("id_token_signing_alg_values_supported",
+                Collections2.transform(clientSymmetricAndAsymmetricSigningAlgsWithNone, toAlgorithmName));
+        m.put("id_token_encryption_alg_values_supported",
+                Collections2.transform(encService.getAllEncryptionAlgsSupported(), toAlgorithmName));
+        m.put("id_token_encryption_enc_values_supported",
+                Collections2.transform(encService.getAllEncryptionEncsSupported(), toAlgorithmName));
+        m.put("request_object_signing_alg_values_supported",
+                Collections2.transform(clientSymmetricAndAsymmetricSigningAlgs, toAlgorithmName));
+        m.put("request_object_encryption_alg_values_supported",
+                Collections2.transform(encService.getAllEncryptionAlgsSupported(), toAlgorithmName));
+        m.put("request_object_encryption_enc_values_supported",
+                Collections2.transform(encService.getAllEncryptionEncsSupported(), toAlgorithmName));
+        m.put("token_endpoint_auth_methods_supported", Lists.newArrayList("client_secret_post", "client_secret_basic",
+                "client_secret_jwt", "private_key_jwt", "none"));
+        m.put("token_endpoint_auth_signing_alg_values_supported",
+                Collections2.transform(clientSymmetricAndAsymmetricSigningAlgs, toAlgorithmName));
+        // display_types_supported
+        m.put("claim_types_supported", Lists.newArrayList("normal" /* , "aggregated", "distributed" */));
+        m.put("claims_supported", Lists.newArrayList(
+                "sub",
+                "name",
+                "preferred_username",
+                "given_name",
+                "family_name",
+                "middle_name",
+                "nickname",
+                "profile",
+                "picture",
+                "website",
+                "gender",
+                "zoneinfo",
+                "locale",
+                "updated_at",
+                "birthdate",
+                "email",
+                "email_verified",
+                "phone_number",
+                "phone_number_verified",
+                "address"));
+        m.put("service_documentation", baseUrl + "about");
+        // claims_locales_supported
+        // ui_locales_supported
+        m.put("claims_parameter_supported", false);
+        m.put("request_parameter_supported", true);
+        m.put("request_uri_parameter_supported", false);
+        m.put("require_request_uri_registration", false);
+        m.put("op_policy_uri", baseUrl + "about");
+        m.put("op_tos_uri", baseUrl + "about");
 
-		m.put("code_challenge_methods_supported", Lists.newArrayList(PKCEAlgorithm.plain.getName(), PKCEAlgorithm.S256.getName()));
+        m.put("introspection_endpoint", baseUrl + IntrospectionEndpoint.URL); // token introspection endpoint for
+                                                                              // verifying tokens
+        m.put("revocation_endpoint", baseUrl + RevocationEndpoint.URL); // token revocation endpoint
 
-		m.put("device_authorization_endpoint", baseUrl + DeviceEndpoint.URL);
+        m.put("code_challenge_methods_supported",
+                Lists.newArrayList(PKCEAlgorithm.plain.getName(), PKCEAlgorithm.S256.getName()));
 
-		model.addAttribute(JsonEntityView.ENTITY, m);
+        m.put("device_authorization_endpoint", baseUrl + DeviceEndpoint.URL);
 
-		return JsonEntityView.VIEWNAME;
-	}
+        model.addAttribute(JsonEntityView.ENTITY, m);
+
+        return JsonEntityView.VIEWNAME;
+    }
 
 }
