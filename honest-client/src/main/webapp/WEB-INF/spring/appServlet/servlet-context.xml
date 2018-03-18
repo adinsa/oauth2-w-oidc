@@ -110,7 +110,7 @@
 
 		<property name="issuerService" ref="hybridIssuerService" />
 		<property name="serverConfigurationService" ref="dynamicServerConfigurationService" />
-		<property name="clientConfigurationService" ref="staticClientConfigurationService" />
+		<property name="clientConfigurationService" ref="dynamicClientConfigurationService" />
 		<property name="authRequestOptionsService" ref="staticAuthRequestOptionsService" />
 		<property name="authRequestUrlBuilder" ref="plainAuthRequestUrlBuilder" />
 		
