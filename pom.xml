@@ -9,6 +9,7 @@
 
   <modules>
     <module>honest-op</module>
+    <module>malicious-op</module>
     <module>honest-client</module>
   </modules>
 
