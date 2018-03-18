@@ -17,9 +17,13 @@
 				<div class="row-fluid">
 					
 					<div class="span2">
-						<button class="btn" id="localhost">Local MITREid Connect Server (default setup)</button>
+						<button class="btn" id="honest">Honest local MITREid Connect Server</button>
 					</div>
 				
+					<div class="span2">
+						<button class="btn" id="malicious">Malicious local MITREid Connect Server</button>
+					</div>
+                
 					<div class="span2">
 						<button class="btn" id="mitreidorg">mitre.org integration site demo user</button>
 					</div>
@@ -42,8 +46,11 @@
 
 <script type="text/javascript">
 	$(document).ready(function () {
-		$('#localhost').on('click', function() {
+		$('#honest').on('click', function() {
 			$('#identifier').val('${honest.issuer.uri}');
+		});
+		$('#malicious').on('click', function() {
+			$('#identifier').val('${malicious.issuer.uri}');
 		});
 		$('#mitreidorg').on('click', function() {
 			$('#identifier').val('user@mitreid.org');
