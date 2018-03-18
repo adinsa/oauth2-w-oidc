@@ -53,5 +53,9 @@
       <groupId>org.mitre</groupId>
       <artifactId>openid-connect-common</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.mitre</groupId>
+      <artifactId>openid-connect-server</artifactId>
+    </dependency>
   </dependencies>
 </project>
