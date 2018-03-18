@@ -43,7 +43,7 @@
 <script type="text/javascript">
 	$(document).ready(function () {
 		$('#localhost').on('click', function() {
-			$('#identifier').val('http://${server.host}/oidc-server/');
+			$('#identifier').val('${honest.issuer.uri}');
 		});
 		$('#mitreidorg').on('click', function() {
 			$('#identifier').val('user@mitreid.org');

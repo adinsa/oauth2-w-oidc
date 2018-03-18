@@ -7,7 +7,7 @@
     <version>1.0-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
-  <artifactId>oidc-server</artifactId>
+  <artifactId>honest-op</artifactId>
   <packaging>war</packaging>
   <build>
     <plugins>
@@ -35,7 +35,7 @@
         </configuration>
       </plugin>
     </plugins>
-    <finalName>oidc-server</finalName>
+    <finalName>honest-op</finalName>
     <resources>
       <resource>
         <directory>src/main/resources</directory>

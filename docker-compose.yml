@@ -9,34 +9,34 @@ services:
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
-  oidc-server:
+  honest-op:
     image: tomcat:latest
     ports:
       - "9090:9090"
     expose:
       - "80"
     volumes:
-      - ./oidc-server/target/oidc-server.war:/usr/local/tomcat/webapps/oidc-server.war
+      - ./honest-op/target/honest-op.war:/usr/local/tomcat/webapps/honest-op.war
       - type: bind
-        source: ./configs/oidc-server/tomcat
+        source: ./configs/honest-op/tomcat
         target: /usr/local/tomcat/conf
-    container_name: oidc-server
+    container_name: honest-op
     environment:
       - JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,address=9090,server=y,suspend=n"
-      - VIRTUAL_HOST=oidc-server
+      - VIRTUAL_HOST=honest-op
 
-  simple-web-app:
+  honest-client:
     image: tomcat:latest
     ports:
       - "9091:9090"
     expose:
       - "80"
     volumes:
-      - ./simple-web-app/target/simple-web-app.war:/usr/local/tomcat/webapps/simple-web-app.war
+      - ./honest-client/target/honest-client.war:/usr/local/tomcat/webapps/honest-client.war
       - type: bind
-        source: ./configs/simple-web-app/tomcat
+        source: ./configs/honest-client/tomcat
         target: /usr/local/tomcat/conf
-    container_name: oidc-client
+    container_name: honest-client
     environment:
       - JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,address=9090,server=y,suspend=n"
-      - VIRTUAL_HOST=simple-web-app
+      - VIRTUAL_HOST=honest-client
