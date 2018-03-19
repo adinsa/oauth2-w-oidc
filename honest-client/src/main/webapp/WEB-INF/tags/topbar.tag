@@ -66,7 +66,13 @@
 								<li class="active"><a href="#">Logout</a></li>
 							</c:when>
 							<c:otherwise>
-								<li><a href="j_spring_security_logout">Logout</a></li>
+								<c:url var="logoutUrl" value="/logout"/>
+								<li>
+									<form class="form-inline" action="${logoutUrl}" method="post">
+									<button style="padding-top:10px; color:rgb(153, 153, 153);" type="submit" value="Log out" class="btn-link">Log out</button>
+								</li>
+									<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+								</form>
 							</c:otherwise>
 						</c:choose>
 	

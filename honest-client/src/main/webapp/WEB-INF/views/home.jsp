@@ -8,9 +8,9 @@
 	<div class="row-fluid">
 		<div class="span10 offset1">
 
-			<h1>
-				Hello world!
-			</h1>
+			<h2>
+				Simple Web App Client & end-user App
+			</h2>
 		
 			<div>
 				<p class="well">
@@ -32,13 +32,16 @@
 					<li><a href="admin">Admin</a>, requires the user to be logged in with the <code>ROLE_ADMIN</code> Spring Security authority. 
 					    See below for the currently configured list of admin accounts.</li>
 					<security:authorize access="hasRole('ROLE_USER')">
-						<li><a href="j_spring_security_logout">Logout</a>, log out directly and return to this page.</li>
+						<c:url var="logoutUrl" value="/logout"/>
+						<form class="form-inline" action="${logoutUrl}" method="post">
+							<li><button style="padding-left:0px" type="submit" value="Log out" class="btn-link">Log out,</button>log out and return to the login page.</li>
+							<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+						</form>
 					</security:authorize>
 					<security:authorize access="!hasRole('ROLE_USER')">
 						<li><a href="login">Log in</a>, log in directly and return to this page.</li>
 					</security:authorize>
 				</ul>
-			
 			
 			</div>
 		
