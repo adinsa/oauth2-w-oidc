@@ -1,48 +1,73 @@
 # oauth2-w-oidc
 
-This project is the start of a testbed for researching vulnerabilities in OAuth2 w/OIDC.
+This project is an effort to replicate the results of Mainka et al. [1] on second-order vulnerabilities in OpenID Connect.
 
 It is a Maven project with the following modules:
 
-- ```oidc-server```- A simple [overlay](https://github.com/mitreid-connect/OpenID-Connect-Java-Spring-Server/wiki/Maven-Overlay-Project-How-To) of the [MITREid Connect](https://github.com/mitreid-connect/OpenID-Connect-Java-Spring-Server) server.
-- ```simple-web-app```- A copy of MITREid Connect's [simple-web-app](https://github.com/mitreid-connect/simple-web-app), which demonstrates usage of their client library.
+- ```honest-op```- The honest OpenID Provider (OP).
+- ```malicious-op```- The malicious OpenID Provider (OP). 
+- ```honest-client```- A client based off of MITREid Connect's [simple-web-app](https://github.com/mitreid-connect/simple-web-app).
 
-It also serves as a [repository-based CloudLab profile](http://docs.cloudlab.us/creating-profiles.html). The profile is defined in `profile.py`, which invokes `setup.sh` to provision the nodes.
+Both ```honest-op``` and ```malicious-op``` are [overlays](https://github.com/mitreid-connect/OpenID-Connect-Java-Spring-Server/wiki/Maven-Overlay-Project-How-To) of the [MITREid Connect](https://github.com/mitreid-connect/OpenID-Connect-Java-Spring-Server) server.
 
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
-### Prerequisites
+## Prerequisites
 
 You will need the following installed on your system:
 
- - [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
- - [Maven](https://maven.apache.org/)
- - [Tomcat](https://tomcat.apache.org/)
+- [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+- [Maven](https://maven.apache.org/)
+- [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
 
-### Installing
+## Setup and Installation
 
-1. Build it:
+1. Add entries to your ```/etc/hosts``` file that map ```honest-op```, ```malicious-op```, and ```honest-client``` to your loopback interface. On my system this looks like:
 
-    ```
-    $ mvn package
-    ```
-
-2. Copy the `.war` files to Tomcat's `webapps` directory. For example:
-
-    ```
-    $ sudo cp oidc-server/target/oidc-server.war /var/lib/tomcat8/webapps/
-    ```  
-    ```
-    $ sudo cp simple-web-app/target/simple-web-app.war /var/lib/tomcat8/webapps/
+    ```bash
+    127.0.1.1       honest-op  
+    127.0.1.1       malicious-op  
+    127.0.1.1       honest-client
     ```
 
-The server is accessible at [http://localhost:8080/oidc-server/](http://localhost:8080/oidc-server/).  
-The client app is accessible at [http://localhost:8080/simple-web-app/](http://localhost:8080/simple-web-app/).
+2. Build the project, supplying ```honest.issuer.uri``` for ```honest-op```, ```malicious.issuer.uri``` for ```malicious-op```, and ```honest.client.uri``` for ```honest-client```:
 
-The server is set up by default with an in-memory database containing users `user`/`password` and `admin`/`password`.
+    ```bash
+    mvn clean package -Dhonest.issuer.uri=http://honest-op/honest-op/ -Dmalicious.issuer.uri=http://malicious-op/malicious-op/ -Dhonest.client.uri=http://honest-client/honest-client/
+    ```
 
-## Deployment
+    If packaging locally is not an option or you run into errors with local packaging, you can use Docker to build the packages:
 
-This project can be deployed to CloudLab by creating a [repository-based profile](http://docs.cloudlab.us/creating-profiles.html) using the URL to this repository (https://bitbucket.org/dinsaa/oauth2-w-oidc.git). Once instantiated, you can find the hostnames for each node from the experiment's 'List View' to determine the URLs (e.g. http://aptvm067-1.apt.emulab.net:8080/oidc-server/ and http://aptvm070-1.apt.emulab.net:8080/simple-web-app/).
+    ```bash
+    docker run --rm -it -v $(pwd):/project mvn clean package -Dhonest.issuer.uri=http://honest-op/honest-op/ -Dmalicious.issuer.uri=http://malicious-op/malicious-op/ -Dhonest.client.uri=http://honest-client/honest-client/ 
+    ```
+
+    This will build the war files in the docker container and save them to the current directory on the host. The container will be disposed after the build completes.
+
+2. Run:
+
+    ```bash
+    docker-compose up
+    ```
+    or, to run in detached mode:
+
+    ```bash
+    docker-compose up -d
+    ```
+    to list the running containers:
+    ```bash
+    docker-compose ps
+    ```
+    or
+
+    ```bash
+    docker ps
+    ```
+
+The honest server is accessible at [http://honest-op/honest-op/](http://honest-op/honest-op/).  
+The malicious server is accessible at [http://malicious-op/malicious-op/](http://malicious-op/malicious-op/).  
+The client app is accessible at [http://honest-client/honest-client/](http://honest-client/honest-client/).
+
+The servers are set up by default with in-memory databases containing users `user`/`password` and `admin`/`password`.
+
+## References
+
+\[1\] [Mladenov, V., Mainka, C., & Schwenk, J. (2015). On the security of modern single sign-on protocols: Second-order vulnerabilities in openid connect. arXiv preprint arXiv:1508.04324](https://arxiv.org/pdf/1508.04324.pdf)
