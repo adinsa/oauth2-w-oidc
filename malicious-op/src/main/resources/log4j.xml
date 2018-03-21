@@ -28,6 +28,11 @@
 	</appender>
 
 	<!-- Application Loggers -->
+    <logger name="org.mitre">
+        <level value="debug" />
+    </logger>
+
+    <!--
 	<logger name="org.mitre.openid">
 		<level value="info" />
 	</logger>
@@ -52,6 +57,7 @@
 	<logger name="org.mitre.data">
 		<level value="info" />
 	</logger>
+    -->
 					
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">
@@ -71,7 +77,7 @@
 	</logger>
 
 	<logger name="org.springframework.security">
-		<level value="warn" />
+		<level value="debug" />
 	</logger>
 
 	<!-- Root Logger -->
