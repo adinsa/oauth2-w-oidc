@@ -22,16 +22,6 @@
               <artifactId>openid-connect-server-webapp</artifactId>
             </overlay>
           </overlays>
-          <webResources>
-            <webResource>
-              <directory>${basedir}/src/main/webapp/WEB-INF</directory>
-              <filtering>true</filtering>
-              <targetPath>WEB-INF</targetPath>
-              <includes>
-                <include>**/server-config.xml</include>
-              </includes>
-            </webResource>
-          </webResources>
         </configuration>
       </plugin>
     </plugins>

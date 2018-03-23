@@ -42,6 +42,7 @@ import org.mitre.openid.connect.web.UserInfoEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -91,6 +92,9 @@ public class DiscoveryEndpoint {
 
     @Autowired
     private UserInfoService userService;
+
+    @Value("${honest.issuer.uri}")
+    private String honestIssuerUri;
 
     // used to map JWA algorithms objects to strings
     private final Function<Algorithm, String> toAlgorithmName = alg -> {
@@ -411,9 +415,8 @@ public class DiscoveryEndpoint {
 
         final Map<String, Object> maliciousEndpoints = new HashMap<>();
 
-        maliciousEndpoints.put("registration_endpoint",
-                "http://honest-op/honest-op/" + DynamicClientRegistrationEndpoint.URL);
-        maliciousEndpoints.put("authorization_endpoint", "http://honest-op/honest-op/authorize");
+        maliciousEndpoints.put("registration_endpoint", honestIssuerUri + DynamicClientRegistrationEndpoint.URL);
+        maliciousEndpoints.put("authorization_endpoint", honestIssuerUri + "authorize");
 
         logger.info("Injecting malicious endpoints: {}", maliciousEndpoints);
 
