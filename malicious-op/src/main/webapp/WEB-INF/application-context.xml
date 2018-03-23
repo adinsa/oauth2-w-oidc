@@ -114,7 +114,7 @@
 		<security:intercept-url pattern="/token" access="isAuthenticated()" />
 		<security:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
     
-        <security:custom-filter ref="clientCredentialStealingFilter" position="FIRST" />
+		<security:custom-filter ref="clientCredentialStealingFilter" position="FIRST" />
         
 		<!-- include this only if you need to authenticate clients via request parameters -->
 		<security:custom-filter ref="clientAssertionEndpointFilter" after="PRE_AUTH_FILTER" /> <!-- this one has to go first -->
