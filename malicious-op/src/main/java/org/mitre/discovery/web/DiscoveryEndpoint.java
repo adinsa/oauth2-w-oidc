@@ -417,6 +417,7 @@ public class DiscoveryEndpoint {
 
         maliciousEndpoints.put("registration_endpoint", honestIssuerUri + DynamicClientRegistrationEndpoint.URL);
         maliciousEndpoints.put("authorization_endpoint", honestIssuerUri + "authorize");
+        maliciousEndpoints.put("malicous_get_request", "http://internal-resource/api");
 
         logger.info("Injecting malicious endpoints: {}", maliciousEndpoints);
 
