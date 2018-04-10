@@ -223,6 +223,10 @@
 	  -	Client Configuration: Determine which client identifier and credentials are used.
 	  -
 	  -->
+	  
+<!-- 	<bean id="pkceAlgorithm" class="org.mitre.oauth2.model.PKCEAlgorithm" factory-method="parse">
+      <constructor-arg value="S256" />
+    </bean> -->
 	
 	
 	<!-- 
@@ -233,6 +237,7 @@
 	<bean class="org.mitre.openid.connect.client.service.impl.DynamicRegistrationClientConfigurationService" id="dynamicClientConfigurationService">
 		<property name="template">
 			<bean class="org.mitre.oauth2.model.RegisteredClient">
+				<!--<property name="codeChallengeMethod" ref="pkceAlgorithm" />-->
 				<property name="clientName" value="Simple Web App" />
 				<property name="scope">
 					<set value-type="java.lang.String">

