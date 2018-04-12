@@ -6,7 +6,6 @@ services:
     image: jwilder/nginx-proxy
     ports:
       - "80:80"
-      - "8443:8443"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
@@ -27,7 +26,9 @@ services:
     environment:
       - JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,address=9090,server=y,suspend=n"
       - VIRTUAL_HOST=honest-op
-
+      - VIRTUAL_PROTO=https
+      - VIRTUAL_PORT=8443
+    
   malicious-op:
     image: tomcat:latest
     ports:
