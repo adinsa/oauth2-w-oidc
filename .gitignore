@@ -7,3 +7,4 @@ target/
 .iml
 oidc-server/oidc-server.iml
 oauth2-w-oidc.iml
+appdeploy.sh

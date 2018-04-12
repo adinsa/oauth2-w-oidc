@@ -6,6 +6,7 @@ services:
     image: jwilder/nginx-proxy
     ports:
       - "80:80"
+      - "8443:8443"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
@@ -15,8 +16,10 @@ services:
       - "9090:9090"
     expose:
       - "80"
+      - "8443"
     volumes:
       - ./honest-op/target/honest-op.war:/usr/local/tomcat/webapps/honest-op.war
+      - ./honest-op/keystore/tomcat.keystore:/usr/local/tomcat.keystore
       - type: bind
         source: ./configs/honest-op/tomcat
         target: /usr/local/tomcat/conf
