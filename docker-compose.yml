@@ -6,16 +6,17 @@ services:
     image: jwilder/nginx-proxy
     ports:
       - "80:80"
-      - "8443:8443"
+      - "443:443"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./configs/nginx/certs:/etc/nginx/certs
 
   honest-op:
     image: tomcat:latest
     ports:
       - "9090:9090"
     expose:
-      - "8443"
+      - "443"
     volumes:
       - ./honest-op/target/honest-op.war:/usr/local/tomcat/webapps/honest-op.war
       - ./honest-op/keystore/tomcat.keystore:/usr/local/tomcat.keystore
@@ -27,7 +28,8 @@ services:
       - JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,address=9090,server=y,suspend=n"
       - VIRTUAL_HOST=honest-op
       - VIRTUAL_PROTO=https
-      - VIRTUAL_PORT=8443
+      - VIRTUAL_PORT=443
+      - HTTP_METHOD=nohttp
     
   malicious-op:
     image: tomcat:latest
