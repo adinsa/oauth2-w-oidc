@@ -214,23 +214,16 @@
 		</property>
 	</bean>
 	
-	
-	
-	
-	
 	<!-- 
 	  -
 	  -	Client Configuration: Determine which client identifier and credentials are used.
 	  -
 	  -->
-<<<<<<< Updated upstream
-=======
-	  
+
 	<bean id="pkceAlgorithm" class="org.mitre.oauth2.model.PKCEAlgorithm" factory-method="parse">
       <constructor-arg value="S256" />
     </bean> 
->>>>>>> Stashed changes
-	
+
 	
 	<!-- 
 		Dynamic Client Configuration, uses dynamic client registration. This version stores the registered
@@ -240,10 +233,7 @@
 	<bean class="org.mitre.openid.connect.client.service.impl.DynamicRegistrationClientConfigurationService" id="dynamicClientConfigurationService">
 		<property name="template">
 			<bean class="org.mitre.oauth2.model.RegisteredClient">
-<<<<<<< Updated upstream
-=======
 				<property name="codeChallengeMethod" ref="pkceAlgorithm" />
->>>>>>> Stashed changes
 				<property name="clientName" value="Simple Web App" />
 				<property name="scope">
 					<set value-type="java.lang.String">
