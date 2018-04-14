@@ -1,0 +1,6 @@
+FROM tomcat:latest
+
+COPY ./configs/nginx/certs/honest-op.chain.pem /etc/ssl/certs
+
+RUN $JAVA_HOME/bin/keytool -import -alias cross -keystore $JAVA_HOME/lib/security/cacerts -trustcacerts -file /etc/ssl/certs/honest-op.chain.pem -storepass changeit -noprompt && \
+	rm -f /etc/ssl/certs/honest-op.chain.pem

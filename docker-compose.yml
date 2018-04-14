@@ -48,7 +48,9 @@ services:
       - VIRTUAL_HOST=malicious-op
 
   honest-client:
-    image: tomcat:latest
+    build:
+      context: ./
+      dockerfile: Dockerfile-tomcat-ssl
     ports:
       - "9092:9090"
     expose:
