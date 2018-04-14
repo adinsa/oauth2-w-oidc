@@ -46,8 +46,6 @@ public class ClientCredentialStealingFilter implements Filter {
         logger.info("client_secret = {}", clientSecret);
         logger.info("code = {}", code);
 
-        // Just proceed with filter chain, which will result in a 401... We could do something more intelligent like
-        // redirecting back to the client.
         chain.doFilter(request, response);
     }
 

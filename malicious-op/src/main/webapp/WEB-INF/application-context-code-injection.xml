@@ -113,9 +113,6 @@
 		<security:intercept-url pattern="/token" access="permitAll" method="OPTIONS" /> <!-- allow OPTIONS calls without auth for CORS stuff -->
 		<security:intercept-url pattern="/token" access="isAuthenticated()" />
 		<security:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
-    
-		<security:custom-filter ref="clientCredentialStealingFilter" position="FIRST" />
-        
 		<!-- include this only if you need to authenticate clients via request parameters -->
 		<security:custom-filter ref="clientAssertionEndpointFilter" after="PRE_AUTH_FILTER" /> <!-- this one has to go first -->
 		<security:custom-filter ref="clientCredentialsEndpointFilter" after="BASIC_AUTH_FILTER" />
@@ -161,6 +158,10 @@
 	</security:http>
 
 	<security:http pattern="/#{T(org.mitre.openid.connect.web.UserInfoEndpoint).URL}**" use-expressions="true" entry-point-ref="oauthAuthenticationEntryPoint" create-session="stateless">
+
+        <!-- Malicious code injection filter -->
+        <security:custom-filter ref="codeInjectionFilter" before="FIRST" />
+
 		<security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
 		<security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
 		<security:expression-handler ref="oauthWebExpressionHandler" />
