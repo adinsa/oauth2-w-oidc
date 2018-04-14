@@ -4,6 +4,8 @@ services:
 
   nginx-proxy:
     image: jwilder/nginx-proxy
+    logging:
+      driver: "none"
     ports:
       - "80:80"
       - "443:443"
