@@ -29,7 +29,7 @@
 
 	<!-- Application Loggers -->
     <logger name="org.mitre">
-        <level value="debug" />
+        <level value="info" />
     </logger>
 
     <!--
@@ -77,7 +77,7 @@
 	</logger>
 
 	<logger name="org.springframework.security">
-		<level value="debug" />
+		<level value="info" />
 	</logger>
 
 	<!-- Root Logger -->

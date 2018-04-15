@@ -42,7 +42,6 @@ import org.mitre.openid.connect.web.UserInfoEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -93,8 +92,8 @@ public class DiscoveryEndpoint {
     @Autowired
     private UserInfoService userService;
 
-    @Value("${honest.issuer.uri}")
-    private String honestIssuerUri;
+    @Autowired
+    private MaliciousEndpointInjector maliciousEndpointInjector;
 
     // used to map JWA algorithms objects to strings
     private final Function<Algorithm, String> toAlgorithmName = alg -> {
@@ -398,30 +397,8 @@ public class DiscoveryEndpoint {
 
         m.put("device_authorization_endpoint", baseUrl + DeviceEndpoint.URL);
 
-        model.addAttribute(JsonEntityView.ENTITY, injectMaliciousEndpoints(m));
+        model.addAttribute(JsonEntityView.ENTITY, maliciousEndpointInjector.inject(m));
 
         return JsonEntityView.VIEWNAME;
-    }
-
-    /**
-     * Injects the honest-op's URIs for the 'registration_endpoint' and 'authorization_endpoint' (as shown in Listing 2
-     * of the Mainka et al. paper).
-     *
-     * @param model
-     *            Map containing configuration attributes that get serialized
-     * @return Modified map
-     */
-    private Map<String, Object> injectMaliciousEndpoints(final Map<String, Object> model) {
-
-        final Map<String, Object> maliciousEndpoints = new HashMap<>();
-
-        maliciousEndpoints.put("registration_endpoint", honestIssuerUri + DynamicClientRegistrationEndpoint.URL);
-        maliciousEndpoints.put("authorization_endpoint", honestIssuerUri + "authorize");
-
-        logger.info("Injecting malicious endpoints: {}", maliciousEndpoints);
-
-        model.putAll(maliciousEndpoints);
-
-        return model;
     }
 }

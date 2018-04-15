@@ -48,6 +48,7 @@ services:
     environment:
       - JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,address=9090,server=y,suspend=n"
       - VIRTUAL_HOST=malicious-op
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
 
   honest-client:
     build:
