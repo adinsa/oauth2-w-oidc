@@ -24,8 +24,8 @@ public class DiscoveryEndpointConfiguration {
     }
 
     @Bean
-    @Profile("code-injection")
-    public MaliciousEndpointInjector codeInjectionInjector() {
+    @Profile({ "code-injection", "dos" })
+    public MaliciousEndpointInjector doNothingInjector() {
         return new MaliciousEndpointInjector.DoNothingMaliciousEndpointInjector();
     }
 }

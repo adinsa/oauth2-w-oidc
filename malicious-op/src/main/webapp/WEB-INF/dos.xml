@@ -32,7 +32,7 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
-	<!-- This configuration differs from the original only in that it places the 'codeInjectionFilter' in the first position of the /userinfo end-point -->
+	<!-- This configuration is no different from the original -->
 
 	<security:http pattern="/token" 
 		create-session="stateless"
@@ -88,10 +88,6 @@
 	</security:http>
 
 	<security:http pattern="/#{T(org.mitre.openid.connect.web.UserInfoEndpoint).URL}**" use-expressions="true" entry-point-ref="oauthAuthenticationEntryPoint" create-session="stateless">
-
-		<!-- Malicious code injection filter -->
-		<security:custom-filter ref="codeInjectionFilter" before="FIRST" />
-
 		<security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
 		<security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
 		<security:expression-handler ref="oauthWebExpressionHandler" />

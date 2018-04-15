@@ -32,6 +32,8 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
+	<!-- This configuration differs from the original only in that it places the 'clientCredentialStealingFilter' in the first position of the /token end-point -->
+
 	<security:http pattern="/token" 
 		create-session="stateless"
 		authentication-manager-ref="clientAuthenticationManager"

@@ -32,7 +32,7 @@ services:
       - VIRTUAL_PROTO=https
       - VIRTUAL_PORT=443
       - HTTP_METHOD=nohttp
-    
+
   malicious-op:
     image: tomcat:latest
     ports:

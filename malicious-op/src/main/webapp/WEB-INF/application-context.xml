@@ -114,5 +114,9 @@
 		<import resource="code-injection.xml" />
 	</beans>
 
+	<beans profile="dos">
+		<import resource="dos.xml" />
+	</beans>
+
 </beans>
 
