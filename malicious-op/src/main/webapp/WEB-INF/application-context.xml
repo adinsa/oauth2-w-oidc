@@ -104,14 +104,15 @@
 
 	<oauth:resource-server id="resourceServerFilter" token-services-ref="defaultOAuth2ProviderTokenService" stateless="false" />
 
-    <!-- The remaining configuration is extracted into attack-specific profiles -->
+	<!-- The remaining configuration is extracted into attack-specific profiles -->
 
-    <beans profile="broken-end-user-auth">
-      <import resource="broken-end-user-auth.xml" />
-    </beans>
+	<beans profile="broken-end-user-auth">
+		<import resource="broken-end-user-auth.xml" />
+	</beans>
 
-    <beans profile="code-injection">
-      <import resource="code-injection.xml" />
-    </beans>
+	<beans profile="code-injection">
+		<import resource="code-injection.xml" />
+	</beans>
 
 </beans>
+
