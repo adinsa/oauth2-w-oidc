@@ -31,7 +31,7 @@ You will need the following installed on your system:
 2. Build the project, supplying ```honest.issuer.uri``` for ```honest-op```, ```malicious.issuer.uri``` for ```malicious-op```, and ```honest.client.uri``` for ```honest-client```:
 
     ```bash
-    mvn clean package -Dhonest.issuer.uri=http://honest-op/honest-op/ -Dmalicious.issuer.uri=http://malicious-op/malicious-op/ -Dhonest.client.uri=http://honest-client/honest-client/
+    mvn clean package -Dhonest.issuer.uri=https://honest-op/honest-op/ -Dmalicious.issuer.uri=http://malicious-op/malicious-op/ -Dhonest.client.uri=http://honest-client/honest-client/
     ```
 
     If packaging locally is not an option or you run into errors with local packaging, you can use Docker to build the packages:
@@ -41,6 +41,17 @@ You will need the following installed on your system:
     ```
 
     This will build the war files in the docker container and save them to the current directory on the host. The container will be disposed after the build completes.
+
+## Usage
+
+1. To activate configuration for one of the attacks, set environment variable ```SPRING_PROFILES_ACTIVE``` to one of the following values:
+
+    ```broken-end-user-auth```- Broken End-User Authentication Attack 
+    ```ssrf```- Server Side Request Forgery Attack 
+    ```code-injection```- Code Injection Attack 
+    ```dos```- Denial-of-Service Attack 
+
+The variable may be set in the ```.env``` file or you may set it in the shell (which will take precedence over what is in ```.env```).
 
 2. Run:
 
