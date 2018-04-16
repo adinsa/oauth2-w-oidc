@@ -47,8 +47,11 @@ You will need the following installed on your system:
 1. To activate configuration for one of the attacks, set environment variable ```SPRING_PROFILES_ACTIVE``` to one of the following values:
 
     ```broken-end-user-auth```- Broken End-User Authentication Attack 
+
     ```ssrf```- Server Side Request Forgery Attack 
+
     ```code-injection```- Code Injection Attack 
+
     ```dos```- Denial-of-Service Attack 
 
 The variable may be set in the ```.env``` file or you may set it in the shell (which will take precedence over what is in ```.env```).
