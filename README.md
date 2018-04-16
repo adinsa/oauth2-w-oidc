@@ -54,7 +54,7 @@ You will need the following installed on your system:
 
     ```dos```- Denial-of-Service Attack 
 
-The variable may be set in the ```.env``` file or you may set it in the shell (which will take precedence over what is in ```.env```).
+    The variable may be set in the ```.env``` file or you may set it in the shell (which will take precedence over what is in ```.env```).
 
 2. Run:
 
