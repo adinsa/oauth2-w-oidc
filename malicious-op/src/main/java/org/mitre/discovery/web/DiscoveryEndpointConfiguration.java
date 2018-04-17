@@ -24,6 +24,12 @@ public class DiscoveryEndpointConfiguration {
     }
 
     @Bean
+    @Profile("ssrf")
+    public MaliciousEndpointInjector ssrfInjector() {
+        return new MaliciousEndpointInjector.SSRFEndpointInjector();
+    }
+
+    @Bean
     @Profile({ "code-injection", "dos" })
     public MaliciousEndpointInjector doNothingInjector() {
         return new MaliciousEndpointInjector.DoNothingMaliciousEndpointInjector();
