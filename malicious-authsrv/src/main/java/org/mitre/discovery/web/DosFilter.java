@@ -108,7 +108,7 @@ public class DosFilter implements Filter {
      * Returns request URI with context path removed. For example:
      *
      * <pre>
-     * &#47;malicious-op&#47;register -> &#47;register
+     * &#47;malicious-authsrv&#47;register -> &#47;register
      * </pre>
      *
      * @param request The {@link HttpServletRequest}

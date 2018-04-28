@@ -13,41 +13,41 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./configs/nginx/certs:/etc/nginx/certs
 
-  honest-op:
+  honest-authsrv:
     image: tomcat:latest
     ports:
       - "9090:9090"
     expose:
       - "443"
     volumes:
-      - ./honest-op/target/honest-op.war:/usr/local/tomcat/webapps/honest-op.war
-      - ./honest-op/keystore/tomcat.keystore:/usr/local/tomcat.keystore
+      - ./honest-authsrv/target/honest-authsrv.war:/usr/local/tomcat/webapps/honest-authsrv.war
+      - ./honest-authsrv/keystore/tomcat.keystore:/usr/local/tomcat.keystore
       - type: bind
-        source: ./configs/honest-op/tomcat
+        source: ./configs/honest-authsrv/tomcat
         target: /usr/local/tomcat/conf
-    container_name: honest-op
+    container_name: honest-authsrv
     environment:
       - JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,address=9090,server=y,suspend=n"
-      - VIRTUAL_HOST=honest-op
+      - VIRTUAL_HOST=honest-authsrv
       - VIRTUAL_PROTO=https
       - VIRTUAL_PORT=443
       - HTTP_METHOD=nohttp
 
-  malicious-op:
+  malicious-authsrv:
     image: tomcat:latest
     ports:
       - "9091:9090"
     expose:
       - "80"
     volumes:
-      - ./malicious-op/target/malicious-op.war:/usr/local/tomcat/webapps/malicious-op.war
+      - ./malicious-authsrv/target/malicious-authsrv.war:/usr/local/tomcat/webapps/malicious-authsrv.war
       - type: bind
-        source: ./configs/malicious-op/tomcat
+        source: ./configs/malicious-authsrv/tomcat
         target: /usr/local/tomcat/conf
-    container_name: malicious-op
+    container_name: malicious-authsrv
     environment:
       - JAVA_OPTS="-agentlib:jdwp=transport=dt_socket,address=9090,server=y,suspend=n"
-      - VIRTUAL_HOST=malicious-op
+      - VIRTUAL_HOST=malicious-authsrv
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
 
   honest-client:

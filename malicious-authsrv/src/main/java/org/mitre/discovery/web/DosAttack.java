@@ -12,7 +12,7 @@ import org.apache.http.impl.client.HttpClients;
  * Simply executes a number of concurrent requests to log in to the honest client as part of the denial-of-service
  * attack.
  * <p>
- * You can run this directly from your IDE or through Maven at the root of the malicious-op project using:
+ * You can run this directly from your IDE or through Maven at the root of the malicious-authsrv project using:
  *
  * <pre>
  * mvn exec:java -Dexec.mainClass="org.mitre.discovery.web.DosAttack"
@@ -24,7 +24,7 @@ import org.apache.http.impl.client.HttpClients;
 public class DosAttack {
 
     private static final int NUM_REQUESTS = 5;
-    private static final String LOGIN_URI = "http://honest-client/honest-client/openid_connect_login?identifier=http%3A%2F%2Fmalicious-op%2Fmalicious-op%2F";
+    private static final String LOGIN_URI = "http://honest-client/honest-client/openid_connect_login?identifier=http%3A%2F%2Fmalicious-authsrv%2Fmalicious-authsrv%2F";
 
     public static void main(final String[] args) throws ClientProtocolException, IOException, InterruptedException {
 

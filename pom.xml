@@ -8,8 +8,8 @@
   <name>oauth2-w-oidc</name>
 
   <modules>
-    <module>honest-op</module>
-    <module>malicious-op</module>
+    <module>honest-authsrv</module>
+    <module>malicious-authsrv</module>
     <module>honest-client</module>
   </modules>
 

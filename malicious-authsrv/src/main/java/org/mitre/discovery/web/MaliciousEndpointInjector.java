@@ -47,7 +47,7 @@ public interface MaliciousEndpointInjector {
         }
 
         /**
-         * Injects the honest-op's URIs for the 'registration_endpoint' and 'authorization_endpoint' (as shown in
+         * Injects the honest-authsrv's URIs for the 'registration_endpoint' and 'authorization_endpoint' (as shown in
          * Listing 2 of the Mainka et al. paper).
          *
          * @param discoveryConfiguration Map of discovery configuration attributes
