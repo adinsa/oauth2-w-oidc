@@ -87,7 +87,8 @@
     <Connector port="443" protocol="org.apache.coyote.http11.Http11NioProtocol"
                maxThreads="200" SSLEnabled="true"
                scheme="https" secure="true"
-               keystoreFile="/usr/local/tomcat.keystore"
+               keystoreType="PKCS12"
+               keystoreFile="/usr/local/honest-authsrv.p12"
                keystorePass="t7jsqtnL" clientAuth="false"
                sslProtocol="TLS">
         <!-- <SSLHostConfig>

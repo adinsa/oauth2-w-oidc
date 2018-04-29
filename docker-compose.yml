@@ -21,7 +21,7 @@ services:
       - "443"
     volumes:
       - ./honest-authsrv/target/honest-authsrv.war:/usr/local/tomcat/webapps/honest-authsrv.war
-      - ./honest-authsrv/keystore/tomcat.keystore:/usr/local/tomcat.keystore
+      - ./honest-authsrv/keystore/honest-authsrv.p12:/usr/local/honest-authsrv.p12
       - type: bind
         source: ./configs/honest-authsrv/tomcat
         target: /usr/local/tomcat/conf
