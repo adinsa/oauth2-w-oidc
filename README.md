@@ -41,7 +41,7 @@ You will need the following installed on your system:
 
     ```bash
     docker run --rm -it -v $(pwd):/project mvn clean package \
-      -Dhonest.issuer.uri=http://honest-authsrv/honest-authsrv/ \
+      -Dhonest.issuer.uri=https://honest-authsrv/honest-authsrv/ \
       -Dmalicious.issuer.uri=http://malicious-authsrv/malicious-authsrv/ \
       -Dhonest.client.uri=http://honest-client/honest-client/ 
     ```
